@@ -13,6 +13,7 @@
 #include "BMI270_reg.h"
 #include "BME280.h"
 #include "BME280_reg.h"
+#include "P_cal.h"
 #include "SDcard.h"
 
 #define F_CPU 16000000UL
@@ -31,6 +32,7 @@ int main(void)
 	BMI270_init();
 	BMI270_config();
 	BME280_config();
+	Calibrate_pressure();
 	init_sd_card();
 	
 	unsigned char ax_MSB, ax_LSB, ay_MSB, ay_LSB, az_MSB, az_LSB, gx_MSB, gx_LSB, gy_MSB, gy_LSB, gz_MSB, gz_LSB, p_MSB, p_LSB;
