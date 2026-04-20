@@ -47,7 +47,7 @@ void Read_calibration_params(void){
 	dig_p7 = (int16_t)((dig_MSB<<8)|dig_LSB);
 
 	dig_LSB = I2C_MasterReceiveByte(BME280_address,0x9c);
-	dig_MSB = I2C_MasterReceiveByte(BME280_address,0x9b);
+	dig_MSB = I2C_MasterReceiveByte(BME280_address,0x9d);
 	dig_p8 = (int16_t)((dig_MSB<<8)|dig_LSB);
 
 	dig_LSB = I2C_MasterReceiveByte(BME280_address,0x9e);

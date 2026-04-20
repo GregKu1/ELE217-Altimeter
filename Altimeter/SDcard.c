@@ -60,7 +60,7 @@ void init_sd_card(void)
 	rc = f_close(&fp);
 }
 
-void SD_sample_write(unsigned short *samples){
+void SD_sample_write(long int *samples){
 
 	UINT bw;
 	FRESULT rc;
@@ -70,7 +70,7 @@ void SD_sample_write(unsigned short *samples){
 	rc = f_open(&fp,"rocketdata.txt", FA_WRITE | FA_OPEN_ALWAYS);
 	
 	// Format data to send to file on SD card
-	int len = sprintf(buff, "%06d\t%06d\t%06d\t%06d\t%06d\t%06d\t%08u\r\n", samples[0], samples[1], samples[2], samples[3], samples[4], samples[5], samples[6]);
+	int len = sprintf(buff, "%06ld\t%06ld\t%06ld\t%06ld\t%06ld\t%06ld\t%08lu\r\n", samples[0], samples[1], samples[2], samples[3], samples[4], samples[5], samples[6]);
 	
 	// Find last line of file
 	rc = f_lseek(&fp, f_size(&fp));

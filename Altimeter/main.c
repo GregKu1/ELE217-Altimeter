@@ -19,6 +19,8 @@
 
 #define F_CPU 16000000UL
 
+volatile char writeFlag = 0;
+
 void timerConfig()	// configure 16bit timer
 {
 	TCCR1B |= (1<<WGM12);	// CTC mode (auto reload)
@@ -30,14 +32,15 @@ void timerConfig()	// configure 16bit timer
 ISR(TIMER1_COMPA_vect)
 {
 	PORTD = PORTD ^ 1<<PORTD6;
-	writeData();
+	writeFlag = 1;
 	
 }
 
 void writeData()
 {
-	unsigned char ax_MSB, ax_LSB, ay_MSB, ay_LSB, az_MSB, az_LSB, gx_MSB, gx_LSB, gy_MSB, gy_LSB, gz_MSB, gz_LSB, p_MSB, p_LSB, p;
-	unsigned short data_sample[7];	//16 bit int array
+	unsigned char ax_MSB, ax_LSB, ay_MSB, ay_LSB, az_MSB, az_LSB, gx_MSB, gx_LSB, gy_MSB, gy_LSB, gz_MSB, gz_LSB, p_MSB, p_LSB;
+	
+	long int data_sample[7];	//16 bit int array
 	ax_LSB = I2C_MasterReceiveByte(BMI270_address, ACC_X_LSB_address);
 	ax_MSB = I2C_MasterReceiveByte(BMI270_address, ACC_X_MSB_address);
 	
@@ -59,10 +62,9 @@ void writeData()
 	p_LSB = I2C_MasterReceiveByte(BME280_address, BME280_press_LSB_data_address);
 	p_MSB = I2C_MasterReceiveByte(BME280_address, BME280_press_MSB_data_address);
 		
-		
-	unsigned short p_cal;
-	p = (p_MSB<<8) | p_LSB;
-	p_cal = Calibrate_pressure(p);
+	
+	unsigned short p = (p_MSB<<8) | p_LSB;
+	unsigned short p_cal = Calibrate_pressure(p);
 		
 	data_sample[0] = (ax_MSB<<8) | ax_LSB;
 	data_sample[1] = (ay_MSB<<8) | ay_LSB;
@@ -70,9 +72,9 @@ void writeData()
 	data_sample[3] = (gx_MSB<<8) | gx_LSB;
 	data_sample[4] = (gy_MSB<<8) | gy_LSB;
 	data_sample[5] = (gz_MSB<<8) | gz_LSB;
-	data_sample[6] = p_cal * 16.0U;
-		
-	SD_sample_write(&data_sample);
+	data_sample[6] = (long int)p_cal<<4;
+	
+	SD_sample_write(data_sample);
 }
 
 
@@ -97,6 +99,11 @@ int main(void)
 	
     while (1) 
     {
+		if (writeFlag)
+		{
+			writeFlag = 0;
+			writeData();
+		}
 		
     }
 

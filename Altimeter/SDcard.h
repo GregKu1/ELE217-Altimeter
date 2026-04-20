@@ -10,7 +10,7 @@
 #define SDCARD_H_
 
 void    init_sd_card(void);
-void	SD_sample_write(unsigned short *);
+void	SD_sample_write(long int *);
 void	get_fattime(void);
 
 #endif /* SDCARD_H_ */
